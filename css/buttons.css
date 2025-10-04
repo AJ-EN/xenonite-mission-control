@@ -1,0 +1,138 @@
+/* ============================================
+   BUTTONS - Premium Palantir Style
+   ============================================ */
+
+.primary-btn {
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 180, 230, 0.9),
+    rgba(0, 212, 255, 1)
+  );
+  border: 1px solid var(--color-primary);
+  border-radius: 6px;
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3),
+    0 0 0 1px rgba(0, 212, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Animated shine effect */
+.primary-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.primary-btn:hover::before {
+  left: 100%;
+}
+
+.primary-btn:hover {
+  transform: translateY(-3px) scale(1.01);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 212, 255, 1),
+    rgba(0, 240, 255, 1)
+  );
+  box-shadow: 0 12px 36px rgba(0, 212, 255, 0.5),
+    0 0 0 2px rgba(0, 212, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 60px rgba(0, 212, 255, 0.3);
+}
+
+.primary-btn:active {
+  transform: translateY(-1px) scale(0.99);
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4),
+    0 0 0 1px rgba(0, 212, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.primary-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 180, 230, 0.3),
+    rgba(0, 212, 255, 0.3)
+  );
+}
+
+/* Compact Modal Buttons */
+.btn {
+  padding: 10px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-bright);
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.15);
+}
+
+.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-dim),
+    var(--color-primary)
+  );
+  border-color: var(--color-primary);
+  color: #000;
+  font-weight: 700;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #bb003e, var(--color-critical));
+  border-color: var(--color-critical);
+  color: #fff;
+  font-weight: 700;
+}
+
+.btn-ghost {
+  padding: 8px 16px;
+  color: var(--color-text-primary);
+  border-color: var(--color-border-bright);
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.btn-ghost:hover {
+  border-color: var(--color-primary);
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 212, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .primary-btn {
+    padding: var(--space-md) var(--space-lg);
+    font-size: 12px;
+  }
+}
+

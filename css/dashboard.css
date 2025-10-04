@@ -1,0 +1,524 @@
+/* ============================================
+   DASHBOARD - THREE COLUMN LAYOUT
+   Left Rail (scrolls) | Center (Earth) | Right Rail (scrolls)
+   ============================================ */
+
+#dashboard {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 380px 1fr 420px;
+  grid-template-rows: 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+  min-height: calc(100vh - 88px);
+  height: calc(100vh - 88px);
+  padding: var(--space-lg);
+  overflow: hidden;
+  pointer-events: none;
+  position: sticky;
+  top: 88px;
+}
+
+/* ============================================
+     LEFT RAIL - Scrollable Container
+     ============================================ */
+#left-rail {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 8px;
+  pointer-events: auto;
+}
+
+/* Custom Scrollbar for Left Rail */
+#left-rail::-webkit-scrollbar {
+  width: 6px;
+}
+#left-rail::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+#left-rail::-webkit-scrollbar-thumb {
+  background: var(--color-border-bright);
+  border-radius: 3px;
+}
+#left-rail::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dim);
+}
+
+/* ============================================
+     CENTER AREA - Earth Visualization
+     ============================================ */
+#center-area {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  position: relative;
+  pointer-events: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Interaction hint (optional, can be removed) */
+#center-area::after {
+  content: "DRAG TO ROTATE • SCROLL TO ZOOM";
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.15em;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#center-area:hover::after {
+  opacity: 0.7;
+}
+
+/* Base Card Styling for All Left Rail Panels */
+#left-rail > div {
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 6px;
+  padding: var(--space-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+#left-rail > div:hover {
+  border-color: rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+#left-rail h3,
+#left-rail h4 {
+  color: var(--color-primary);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-md);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+/* ============================================
+     CTS PANEL (Hero Element)
+     ============================================ */
+#cts-panel {
+  text-align: center;
+  border: 2px solid var(--color-border-bright);
+  min-height: 300px;
+}
+
+#cts-score-container {
+  margin: var(--space-lg) 0;
+}
+
+#cts-score {
+  font-size: 84px;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.5s ease, text-shadow 0.5s ease;
+  display: inline-block;
+}
+
+/* CTS Score Color States */
+#cts-score.nominal {
+  color: var(--color-nominal);
+  text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+#cts-score.elevated {
+  color: var(--color-elevated);
+  text-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+}
+
+#cts-score.warning {
+  color: var(--color-warning);
+  text-shadow: 0 0 30px rgba(255, 136, 0, 0.5);
+}
+
+#cts-score.critical {
+  color: var(--color-critical);
+  text-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
+  animation: pulse-critical 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-critical {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.unit {
+  font-size: 28px;
+  color: var(--color-text-dim);
+  margin-left: var(--space-xs);
+}
+
+#cts-sparkline {
+  margin: var(--space-md) auto;
+  display: block;
+  opacity: 0.8;
+}
+
+#cts-status {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  margin-top: var(--space-md);
+}
+
+/* ============================================
+     ASSET STATUS PANEL
+     ============================================ */
+#asset-panel {
+  min-height: 200px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#asset-info {
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+#asset-info p {
+  font-size: 12px;
+  margin-bottom: var(--space-sm);
+  display: flex;
+  justify-content: space-between;
+  line-height: 1.8;
+  gap: var(--space-sm);
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  flex-wrap: nowrap;
+}
+
+#asset-info strong {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+#asset-info span {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  max-width: 100%;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Custom Scrollbar for Asset Info */
+#asset-info::-webkit-scrollbar {
+  width: 6px;
+}
+#asset-info::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+#asset-info::-webkit-scrollbar-thumb {
+  background: var(--color-border-bright);
+  border-radius: 3px;
+}
+#asset-info::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dim);
+}
+
+/* ============================================
+     ACTIVITY LOG
+     ============================================ */
+#threat-log {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  max-height: 500px;
+}
+
+#log-entries {
+  list-style: none;
+  flex: 1;
+  overflow-y: auto;
+  font-size: 11px;
+  margin-top: var(--space-md);
+}
+
+#log-entries li {
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+#log-entries li:last-child {
+  border-bottom: none;
+}
+
+/* Custom Scrollbar for Log Entries */
+#log-entries::-webkit-scrollbar {
+  width: 6px;
+}
+#log-entries::-webkit-scrollbar-track {
+  background: var(--color-bg-input);
+  border-radius: 3px;
+}
+#log-entries::-webkit-scrollbar-thumb {
+  background: var(--color-border-bright);
+  border-radius: 3px;
+}
+#log-entries::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dim);
+}
+
+/* ============================================
+     RIGHT RAIL - Scrollable Container
+     ============================================ */
+
+#right-rail {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  overflow-y: auto;
+  height: 100%;
+  padding-left: 8px;
+  pointer-events: auto;
+}
+
+/* Custom Scrollbar for Right Rail */
+#right-rail::-webkit-scrollbar {
+  width: 6px;
+}
+#right-rail::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+#right-rail::-webkit-scrollbar-thumb {
+  background: var(--color-border-bright);
+  border-radius: 3px;
+}
+#right-rail::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dim);
+}
+
+/* Base Card Styling for Right Rail Panels */
+#right-rail > div {
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 6px;
+  padding: var(--space-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+#right-rail > div:hover {
+  border-color: rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Circular Economy Panel */
+#business-panel {
+  flex-shrink: 0;
+}
+
+#business-panel h3 {
+  color: var(--color-primary);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-md);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+#business-info p {
+  font-size: 12px;
+  margin-bottom: var(--space-sm);
+  display: flex;
+  justify-content: space-between;
+  line-height: 1.8;
+}
+
+#business-info strong {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--color-primary);
+  border-radius: 3px;
+  font-size: 10px;
+  color: var(--color-primary);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+/* Critical Threat Panel */
+#action-panel {
+  flex-shrink: 0;
+  background: rgba(10, 10, 10, 0.95);
+  border: 2px solid rgba(255, 0, 85, 0.6) !important;
+  animation: border-pulse 2s ease-in-out infinite;
+}
+
+@keyframes border-pulse {
+  0%,
+  100% {
+    border-color: rgba(255, 0, 85, 0.6);
+  }
+  50% {
+    border-color: rgba(255, 136, 0, 0.6);
+  }
+}
+
+#action-panel h3 {
+  text-align: center;
+  color: var(--color-critical);
+  font-size: 13px;
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.15em;
+}
+
+#threat-description {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+#action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.95),
+    rgba(10, 10, 10, 0.95)
+  );
+  border: 1px solid var(--color-border-bright);
+  border-radius: 4px;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn .icon {
+  font-size: 32px;
+}
+
+.action-btn .cost {
+  font-size: 10px;
+  color: var(--color-text-dim);
+  letter-spacing: 0.05em;
+}
+
+.action-btn:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+}
+
+.action-btn.maneuver:hover {
+  border-color: var(--color-elevated);
+  box-shadow: 0 8px 24px rgba(255, 204, 0, 0.3);
+}
+
+.action-btn.mitigate:hover {
+  border-color: var(--color-warning);
+  box-shadow: 0 8px 24px rgba(255, 136, 0, 0.3);
+}
+
+.action-btn.monetize:hover {
+  border-color: var(--color-nominal);
+  box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+}
+
+.action-btn:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+     RESPONSIVE DESIGN
+     ============================================ */
+@media (max-width: 1400px) {
+  #dashboard {
+    grid-template-columns: 350px 1fr 380px;
+  }
+}
+
+@media (max-width: 1024px) {
+  #dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    height: calc(100vh - 88px);
+    overflow-y: auto;
+  }
+
+  #left-rail,
+  #right-rail {
+    grid-column: 1 / -1;
+    max-height: 50vh;
+  }
+
+  #center-area {
+    grid-column: 1 / -1;
+    min-height: 400px;
+  }
+
+  #action-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  #cts-score {
+    font-size: 64px;
+  }
+
+  .unit {
+    font-size: 20px;
+  }
+
+  .action-btn .icon {
+    font-size: 24px;
+  }
+}

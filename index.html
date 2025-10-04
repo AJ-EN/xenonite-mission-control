@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xenonite Mission Control | NASA Space Apps 2025</title>
+
+    <!-- Stylesheets - Modular Architecture -->
+    <link rel="stylesheet" href="css/core.css" />
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/tle-input.css" />
+    <link rel="stylesheet" href="css/buttons.css" />
+    <link rel="stylesheet" href="css/modals.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/utils.css" />
+  </head>
+
+  <body>
+    <!-- Three.js Canvas -->
+    <canvas id="scene-canvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div id="overlay">
+      <!-- Header -->
+      <header id="mission-header">
+        <div class="brand">
+          <h1>XENONITE MISSION CONTROL</h1>
+          <p class="tagline">Making Sci-Fi Dreams Reality</p>
+        </div>
+        <nav class="header-actions">
+          <button
+            id="change-asset-btn"
+            class="btn btn-ghost hidden"
+            aria-label="Change tracked asset"
+          >
+            Change Asset
+          </button>
+        </nav>
+      </header>
+
+      <!-- TLE Input Section (Initial State) -->
+      <section id="tle-input-section" class="active">
+        <div class="system-badge">
+          <span class="status-dot"></span>
+          <span class="status-text">SYSTEM READY</span>
+        </div>
+        <h2>Initialize Asset Tracking</h2>
+
+        <!-- Preset Scenarios -->
+        <div class="input-mode">
+          <h3>Quick Launch Scenarios</h3>
+          <div class="scenario-grid">
+            <button class="scenario-btn" data-scenario="iss">
+              <span class="scenario-icon">🛸</span>
+              <span class="scenario-name">ISS (ZARYA)</span>
+              <span class="scenario-desc">International Space Station</span>
+            </button>
+            <button class="scenario-btn" data-scenario="hubble">
+              <span class="scenario-icon">🔭</span>
+              <span class="scenario-name">HUBBLE</span>
+              <span class="scenario-desc">Space Telescope</span>
+            </button>
+            <button class="scenario-btn" data-scenario="starlink">
+              <span class="scenario-icon">📡</span>
+              <span class="scenario-name">STARLINK-1234</span>
+              <span class="scenario-desc">LEO Constellation</span>
+            </button>
+            <button class="scenario-btn" data-scenario="cosmos">
+              <span class="scenario-icon">💥</span>
+              <span class="scenario-name">COSMOS-2251</span>
+              <span class="scenario-desc">Critical Debris Field</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Custom TLE Input -->
+        <div class="input-mode">
+          <h3>Custom TLE Input</h3>
+          <textarea
+            id="tle-input"
+            placeholder="Paste Two-Line Element Set (TLE) for your satellite...
+        
+        Example:
+        ISS (ZARYA)
+        1 25544U 98067A   25276.49892031  .00013095  00000+0  23997-3 0  9998
+        2 25544  51.6325 130.2428 0001007 193.4972 166.5990 15.49648180531963"
+          ></textarea>
+        </div>
+
+        <button id="init-btn" class="primary-btn">
+          INITIALIZE ORBITAL ANALYSIS
+        </button>
+        <div id="loading-animation" class="hidden">
+          <div class="spinner"></div>
+          <p>Analyzing orbital parameters...</p>
+        </div>
+      </section>
+
+      <!-- Dashboard (Hidden Initially) -->
+      <section id="dashboard" class="hidden">
+        <!-- LEFT RAIL (scrolls independently) -->
+        <div id="left-rail">
+          <div id="cts-panel">
+            <h3>COLLISION THREAT SCORE</h3>
+            <div id="cts-score-container">
+              <span id="cts-score" class="nominal">0</span>
+              <span class="unit">/100</span>
+            </div>
+            <canvas id="cts-sparkline" width="300" height="60"></canvas>
+            <p id="cts-status">STATUS: NOMINAL</p>
+          </div>
+
+          <div id="asset-panel">
+            <h3>ASSET STATUS</h3>
+            <div id="asset-info">
+              <p><strong>Name:</strong> <span id="sat-name">—</span></p>
+              <p>
+                <strong>Altitude:</strong> <span id="sat-altitude">—</span> km
+              </p>
+              <p>
+                <strong>Velocity:</strong> <span id="sat-velocity">—</span> km/s
+              </p>
+              <p>
+                <strong>Inclination:</strong>
+                <span id="sat-inclination">—</span>°
+              </p>
+              <p>
+                <strong>Fuel Reserve:</strong> <span id="sat-fuel">100%</span>
+              </p>
+              <p>
+                <strong>Remaining Life:</strong> <span id="sat-life">100%</span>
+              </p>
+              <p>
+                <strong>Operational Status:</strong>
+                <span id="sat-status">Nominal</span>
+              </p>
+            </div>
+          </div>
+
+          <div id="threat-log">
+            <h4>Activity Log</h4>
+            <ul id="log-entries"></ul>
+          </div>
+        </div>
+
+        <!-- CENTER AREA - Earth Visualization (pointer events pass through to canvas) -->
+        <div id="center-area"></div>
+
+        <!-- RIGHT RAIL -->
+        <div id="right-rail">
+          <!-- Business Model Panel -->
+          <div id="business-panel">
+            <h3>CIRCULAR ECONOMY MODEL</h3>
+            <div id="business-info">
+              <p><strong>Asset Value:</strong> $45M</p>
+              <p><strong>Salvage Potential:</strong> $2.5M</p>
+              <p><strong>Mitigation Budget:</strong> $12M/yr</p>
+              <p>
+                <strong>Compliance:</strong>
+                <span class="badge">FCC Licensed</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Critical Threat Panel -->
+          <div id="action-panel" class="hidden">
+            <h3>⚠️ CRITICAL THREAT DETECTED</h3>
+            <p id="threat-description">No immediate threats detected.</p>
+            <div id="action-buttons">
+              <button class="action-btn maneuver" data-action="maneuver">
+                <span class="icon">🛰️</span>
+                EVASIVE MANEUVER
+                <span class="cost">Cost: $850K • Time: 2 hrs</span>
+              </button>
+              <button class="action-btn mitigate" data-action="mitigate">
+                <span class="icon">🤝</span>
+                CONTRACT MITIGATION
+                <span class="cost">Cost: $1.2M • SLA: 24 hrs</span>
+              </button>
+              <button class="action-btn monetize" data-action="monetize">
+                <span class="icon">💰</span>
+                MONETIZE EOL
+                <span class="cost">Revenue: $2.5M • Transfer: 7 days</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Load Libraries First -->
+    <script src="lib/three.min.js"></script>
+    <script src="lib/satellite.min.js"></script>
+
+    <!-- Load Application Modules in Order -->
+    <script src="js/data-loader.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/orbital.js"></script>
+    <script src="js/cts-engine.js"></script>
+    <script src="js/ui-controller.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

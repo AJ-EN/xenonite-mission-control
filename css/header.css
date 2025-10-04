@@ -1,0 +1,59 @@
+/* ============================================
+   HEADER - Fixed Navigation Bar
+   ============================================ */
+
+#mission-header {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.88));
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-xl);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+}
+
+#mission-header .brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#mission-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.tagline {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#mission-header .header-actions .btn {
+  padding: 8px 16px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  #mission-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  #mission-header h1 {
+    font-size: 14px;
+  }
+
+  .tagline {
+    font-size: 9px;
+  }
+}

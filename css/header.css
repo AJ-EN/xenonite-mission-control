@@ -1,7 +1,6 @@
 /* ============================================
    HEADER - Fixed Navigation Bar
    ============================================ */
-
 #mission-header {
   position: fixed;
   left: 0;
@@ -16,6 +15,14 @@
   padding: var(--space-md) var(--space-xl);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(20px);
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#mission-header.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 #mission-header .brand {

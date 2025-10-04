@@ -87,6 +87,13 @@ const App = (function () {
             SceneManager.addSkybox();
             SceneManager.addCameraControls();
 
+            // Initialize historical debris system
+            if (window.HistoricalDebris) {
+                const scene = SceneManager.getScene();
+                HistoricalDebris.init(scene);
+                console.log('App: Historical debris system initialized');
+            }
+
             console.log('App: [2/5] Loading satellite data...');
 
             // Step 2: Load TLE data
@@ -319,6 +326,11 @@ const App = (function () {
             if (isRunning && now - lastUIUpdate > UI_UPDATE_INTERVAL) {
                 updateUI();
                 lastUIUpdate = now;
+            }
+
+            // ===== ANIMATE HISTORICAL DEBRIS (If active) =====
+            if (window.HistoricalDebris) {
+                HistoricalDebris.animate();
             }
 
             // ===== RENDER SCENE (Every Frame) =====

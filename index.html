@@ -8,6 +8,7 @@
     <!-- Stylesheets - Modular Architecture -->
     <link rel="stylesheet" href="css/core.css" />
     <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/historical-mode.css" />
     <link rel="stylesheet" href="css/tle-input.css" />
     <link rel="stylesheet" href="css/buttons.css" />
     <link rel="stylesheet" href="css/modals.css" />
@@ -21,6 +22,65 @@
 
     <!-- UI Overlay -->
     <div id="overlay">
+      <!-- STAGE 1: Historical Mode -->
+      <div id="historical-mode">
+        <!-- Hero Title -->
+        <div class="historical-title">
+          <h1>THE GROWTH OF A<br />GLOBAL PROBLEM</h1>
+          <p class="subtitle">Orbital Debris 1980—2025</p>
+          <div class="debris-display">
+            <div class="debris-label">TRACKED OBJECTS</div>
+            <div class="debris-number" id="debris-number">5,000</div>
+            <div class="year-label" id="year-label">Year: 1980</div>
+          </div>
+        </div>
+
+        <!-- Timeline Controls -->
+        <div class="timeline-controls">
+          <div class="timeline-header">
+            <span class="timeline-label">Timeline</span>
+            <div class="debris-count">
+              <span class="number">5,000</span>
+              <span class="label">Tracked Objects</span>
+            </div>
+          </div>
+
+          <div class="slider-container">
+            <input
+              type="range"
+              id="time-slider"
+              min="1980"
+              max="2025"
+              value="1980"
+              step="1"
+            />
+            <div class="year-markers">
+              <span class="year-marker">1980</span>
+              <span class="year-marker">1990</span>
+              <span class="year-marker">2000</span>
+              <span class="year-marker">2010</span>
+              <span class="year-marker">2020</span>
+              <span class="year-marker">2025</span>
+            </div>
+          </div>
+
+          <div class="playback-controls">
+            <button id="play-btn" class="play-btn">
+              <span class="play-icon">▶</span>
+              <span class="play-text">PLAY TIMELINE</span>
+            </button>
+            <div class="speed-control">
+              <button class="speed-btn active" data-speed="1">1x</button>
+              <button class="speed-btn" data-speed="2">2x</button>
+              <button class="speed-btn" data-speed="4">4x</button>
+            </div>
+          </div>
+
+          <div class="progress-indicator">
+            Witness 45 years of orbital debris accumulation
+          </div>
+        </div>
+      </div>
       <!-- Header -->
       <header id="mission-header">
         <div class="brand">
@@ -38,8 +98,8 @@
         </nav>
       </header>
 
-      <!-- TLE Input Section (Initial State) -->
-      <section id="tle-input-section" class="active">
+      <!-- STAGE 2: TLE Input Section (Hidden Initially) -->
+      <section id="tle-input-section" class="hidden" style="display: none">
         <div class="system-badge">
           <span class="status-dot"></span>
           <span class="status-text">SYSTEM READY</span>
@@ -203,6 +263,8 @@
     <script src="js/orbital.js"></script>
     <script src="js/cts-engine.js"></script>
     <script src="js/ui-controller.js"></script>
+    <script src="js/historical-debris.js"></script>
+    <script src="js/historical-mode.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

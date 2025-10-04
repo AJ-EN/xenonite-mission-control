@@ -100,7 +100,7 @@ h4 {
   grid-template-columns: 1fr;
   gap: 0;
   padding: 0;
-  padding-top: 88px; /* Space for fixed header */
+  padding-top: 0; /* No padding for Stage 1 */
   padding-bottom: var(--space-xxl);
   overflow-y: visible;
   overflow-x: hidden;

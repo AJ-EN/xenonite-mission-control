@@ -5,6 +5,8 @@
 /* UTILITY CLASSES */
 .hidden {
   display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .active {
@@ -38,4 +40,3 @@ button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
-

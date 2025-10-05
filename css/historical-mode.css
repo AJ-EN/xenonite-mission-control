@@ -10,12 +10,41 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--space-xxl);
+  justify-content: flex-start;
+  padding: var(--space-lg);
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   pointer-events: auto;
   transition: opacity 1s ease-out, backdrop-filter 0.5s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar for Historical Mode */
+#historical-mode::-webkit-scrollbar {
+  width: 8px;
+}
+
+#historical-mode::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+#historical-mode::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 212, 255, 0.3),
+    rgba(0, 100, 150, 0.5)
+  );
+  border-radius: 4px;
+}
+
+#historical-mode::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 212, 255, 0.5),
+    rgba(0, 100, 150, 0.7)
+  );
 }
 
 #historical-mode.fade-out {
@@ -26,13 +55,15 @@
 
 /* Hero Title */
 .historical-title {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   animation: title-appear 2s ease-out;
+  margin-bottom: var(--space-xl);
+  min-height: 40vh;
+  max-height: 60vh;
 }
 
 @keyframes title-appear {
@@ -143,11 +174,13 @@
   background: rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(0, 212, 255, 0.4);
   border-radius: 12px;
-  padding: var(--space-xxl) var(--space-xl);
+  padding: var(--space-xl) var(--space-lg);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 212, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 80px rgba(0, 212, 255, 0.15);
   backdrop-filter: blur(30px);
   animation: controls-appear 1.5s ease-out 0.5s backwards;
+  margin-bottom: var(--space-lg);
+  flex-shrink: 0;
 }
 
 @keyframes controls-appear {
@@ -431,7 +464,7 @@
 
 /* Skip Intro Button */
 .skip-intro-btn {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-lg);
   padding: var(--space-md) var(--space-xl);
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(0, 212, 255, 0.3);
@@ -447,6 +480,8 @@
   align-items: center;
   gap: var(--space-sm);
   backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  align-self: center;
 }
 
 .skip-intro-btn:hover {
@@ -471,8 +506,20 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  #historical-mode {
+    padding: var(--space-md);
+    justify-content: flex-start;
+  }
+
+  .historical-title {
+    min-height: 30vh;
+    max-height: 50vh;
+    margin-bottom: var(--space-lg);
+  }
+
   .historical-title h1 {
     font-size: 28px;
+    line-height: 1.2;
   }
 
   .historical-title .subtitle {
@@ -497,10 +544,12 @@
 
   .timeline-controls {
     padding: var(--space-lg);
+    margin-bottom: var(--space-md);
   }
 
   .playback-controls {
     flex-direction: column;
+    gap: var(--space-md);
   }
 
   .play-btn {
@@ -511,11 +560,27 @@
     width: 100%;
     justify-content: center;
   }
+
+  .skip-intro-btn {
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 480px) {
+  #historical-mode {
+    padding: var(--space-sm);
+  }
+
+  .historical-title {
+    min-height: 25vh;
+    max-height: 40vh;
+  }
+
   .historical-title h1 {
     font-size: 24px;
+    line-height: 1.1;
   }
 
   .debris-number {
@@ -524,10 +589,62 @@
 
   .timeline-controls {
     max-width: calc(100vw - 2rem);
+    padding: var(--space-md);
   }
 
   .skip-intro-btn {
-    padding: var(--space-sm) var(--space-lg);
-    font-size: 10px;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 9px;
+  }
+}
+
+/* Additional responsive breakpoints for better support */
+@media (max-height: 600px) {
+  .historical-title {
+    min-height: 20vh;
+    max-height: 35vh;
+  }
+
+  .debris-number {
+    font-size: 80px;
+  }
+
+  .timeline-controls {
+    padding: var(--space-md);
+  }
+}
+
+@media (max-height: 480px) {
+  .historical-title {
+    min-height: 15vh;
+    max-height: 30vh;
+  }
+
+  .debris-number {
+    font-size: 60px;
+  }
+
+  .timeline-controls {
+    padding: var(--space-sm);
+  }
+
+  .skip-intro-btn {
+    margin-top: var(--space-sm);
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .historical-title {
+    min-height: 20vh;
+    max-height: 40vh;
+  }
+
+  .debris-number {
+    font-size: 80px;
+  }
+
+  .timeline-controls {
+    padding: var(--space-md);
   }
 }

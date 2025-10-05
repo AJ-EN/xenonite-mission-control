@@ -504,6 +504,36 @@
   transform: translateX(4px);
 }
 
+/* Windows Performance Optimizations */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  /* Internet Explorer/Edge optimizations */
+  .debris-number {
+    animation-duration: 2.5s !important;
+  }
+
+  .play-btn::before {
+    animation-duration: 0.8s !important;
+  }
+
+  .timeline-controls {
+    backdrop-filter: blur(8px) !important;
+  }
+}
+
+/* Windows-specific optimizations */
+@supports (-webkit-appearance: none) {
+  /* Webkit-based browsers on Windows */
+  .debris-number {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .timeline-controls {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   #historical-mode {

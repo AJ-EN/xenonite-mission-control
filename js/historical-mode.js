@@ -113,23 +113,52 @@ const HistoricalMode = (function () {
         if (elements.playIcon) elements.playIcon.textContent = "⏸";
         if (elements.playText) elements.playText.textContent = "PAUSE";
 
-        // Calculate interval based on speed (45 years in ~15-30 seconds)
-        const baseInterval = 333; // ~3 years per second at 1x
-        const interval = baseInterval / playbackSpeed;
+        // Use requestAnimationFrame for smoother animation on Windows
+        let lastTime = performance.now();
+        let baseInterval = 333 / playbackSpeed; // ms per year
 
-        animationInterval = setInterval(() => {
-            currentYear++;
+        // Apply Windows-specific optimizations while maintaining quality
+        if (typeof WindowsPerformanceOptimizer !== 'undefined' && WindowsPerformanceOptimizer.isWindows()) {
+            baseInterval = WindowsPerformanceOptimizer.getOptimalDuration(baseInterval);
+        }
 
-            if (currentYear > 2025) {
-                currentYear = 2025;
-                stopPlayback();
-                transitionToLiveMode();
-                return;
+        const targetInterval = baseInterval;
+        let animationId = null;
+
+        function animate(currentTime) {
+            if (!isPlaying) return;
+
+            const deltaTime = currentTime - lastTime;
+
+            if (deltaTime >= targetInterval) {
+                currentYear++;
+
+                if (currentYear > 2025) {
+                    currentYear = 2025;
+                    stopPlayback();
+                    transitionToLiveMode();
+                    return;
+                }
+
+                // Batch DOM updates for better performance on Windows
+                requestAnimationFrame(() => {
+                    updateUI();
+                    updateDebrisVisualization();
+                });
+
+                lastTime = currentTime;
             }
 
-            updateUI();
-            updateDebrisVisualization();
-        }, interval);
+            animationId = requestAnimationFrame(animate);
+        }
+
+        animationId = requestAnimationFrame(animate);
+
+        // Store animation ID for cleanup
+        if (animationInterval) {
+            clearInterval(animationInterval);
+        }
+        animationInterval = { id: animationId, cancel: () => cancelAnimationFrame(animationId) };
 
         console.log(`HistoricalMode: Playback started at ${playbackSpeed}x speed`);
     }
@@ -141,7 +170,11 @@ const HistoricalMode = (function () {
         if (elements.playText) elements.playText.textContent = "PLAY TIMELINE";
 
         if (animationInterval) {
-            clearInterval(animationInterval);
+            if (animationInterval.cancel) {
+                animationInterval.cancel();
+            } else {
+                clearInterval(animationInterval);
+            }
             animationInterval = null;
         }
 
@@ -172,20 +205,30 @@ const HistoricalMode = (function () {
         // Update debris count based on real NASA data
         debrisCount = calculateDebrisCount(currentYear);
 
+        // Batch DOM updates for better Windows performance
+        if (typeof WindowsPerformanceOptimizer !== 'undefined' && WindowsPerformanceOptimizer.isWindows()) {
+            // Use requestAnimationFrame for smoother updates on Windows
+            requestAnimationFrame(() => {
+                performDOMUpdates();
+            });
+        } else {
+            performDOMUpdates();
+        }
+    }
+
+    function performDOMUpdates() {
         // Update center debris number display
         if (elements.debrisNumber) {
             elements.debrisNumber.textContent = debrisCount.toLocaleString();
 
-            // Update color based on count severity
-            elements.debrisNumber.classList.remove("low", "medium", "high", "critical");
-            if (debrisCount < 8000) {
-                elements.debrisNumber.classList.add("low");
-            } else if (debrisCount < 15000) {
-                elements.debrisNumber.classList.add("medium");
-            } else if (debrisCount < 25000) {
-                elements.debrisNumber.classList.add("high");
-            } else {
-                elements.debrisNumber.classList.add("critical");
+            // Update color based on count severity (optimized for Windows)
+            const newClass = debrisCount < 8000 ? "low" :
+                debrisCount < 15000 ? "medium" :
+                    debrisCount < 25000 ? "high" : "critical";
+
+            if (!elements.debrisNumber.classList.contains(newClass)) {
+                elements.debrisNumber.className = elements.debrisNumber.className.replace(/low|medium|high|critical/g, '');
+                elements.debrisNumber.classList.add(newClass);
             }
         }
 

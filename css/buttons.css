@@ -69,13 +69,18 @@
 .primary-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
+  transform: none !important;
   box-shadow: none;
   background: linear-gradient(
     135deg,
     rgba(0, 180, 230, 0.3),
     rgba(0, 212, 255, 0.3)
   );
+  pointer-events: none;
+}
+
+.primary-btn:disabled::before {
+  display: none;
 }
 
 /* Compact Modal Buttons */
@@ -135,4 +140,3 @@
     font-size: 12px;
   }
 }
-

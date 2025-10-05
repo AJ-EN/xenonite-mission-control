@@ -26,6 +26,7 @@ const HistoricalMode = (function () {
         playText: null,
         debrisCountDisplay: null,
         speedButtons: [],
+        skipIntroBtn: null,
     };
 
     // ==========================================
@@ -44,6 +45,7 @@ const HistoricalMode = (function () {
         elements.playText = elements.playBtn?.querySelector(".play-text");
         elements.debrisCountDisplay = document.querySelector(".debris-count .number");
         elements.speedButtons = document.querySelectorAll(".speed-btn");
+        elements.skipIntroBtn = document.getElementById("skip-intro-btn");
 
         // Setup event listeners
         setupEventListeners();
@@ -72,6 +74,14 @@ const HistoricalMode = (function () {
         elements.speedButtons.forEach((btn, index) => {
             btn.addEventListener("click", () => setPlaybackSpeed(Math.pow(2, index)));
         });
+
+        // Skip intro button
+        if (elements.skipIntroBtn) {
+            elements.skipIntroBtn.addEventListener("click", () => {
+                console.log("HistoricalMode: Skip button clicked");
+                transitionToLiveMode();
+            });
+        }
     }
 
     // ==========================================

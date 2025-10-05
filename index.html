@@ -3,7 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Xenonite Mission Control - Advanced satellite tracking and collision threat monitoring system for NASA Space Apps Challenge 2025"
+    />
+    <meta
+      name="keywords"
+      content="satellite tracking, orbital debris, collision detection, space debris, NASA, space apps"
+    />
+    <meta name="author" content="Xenonite Team" />
+    <meta name="theme-color" content="#00d4ff" />
     <title>Xenonite Mission Control | NASA Space Apps 2025</title>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='80'>🛰️</text></svg>"
+    />
 
     <!-- Stylesheets - Modular Architecture -->
     <link rel="stylesheet" href="css/core.css" />
@@ -79,6 +96,15 @@
           <div class="progress-indicator">
             Witness 45 years of orbital debris accumulation
           </div>
+
+          <button
+            id="skip-intro-btn"
+            class="skip-intro-btn"
+            aria-label="Skip introduction"
+          >
+            <span class="skip-text">SKIP INTRO</span>
+            <span class="skip-icon">→</span>
+          </button>
         </div>
       </div>
       <!-- Header -->
@@ -99,7 +125,7 @@
       </header>
 
       <!-- STAGE 2: TLE Input Section (Hidden Initially) -->
-      <section id="tle-input-section" class="hidden" style="display: none">
+      <section id="tle-input-section" class="hidden">
         <div class="system-badge">
           <span class="status-dot"></span>
           <span class="status-text">SYSTEM READY</span>
@@ -256,6 +282,9 @@
     <!-- Load Libraries First -->
     <script src="lib/three.min.js"></script>
     <script src="lib/satellite.min.js"></script>
+
+    <!-- Load Utilities -->
+    <script src="js/logger.js"></script>
 
     <!-- Load Application Modules in Order -->
     <script src="js/data-loader.js"></script>

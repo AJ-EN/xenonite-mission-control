@@ -64,22 +64,23 @@
   justify-content: center;
 }
 
-/* Interaction hint (optional, can be removed) */
+/* Interaction hint - Subtle and non-intrusive */
 #center-area::after {
   content: "DRAG TO ROTATE • SCROLL TO ZOOM";
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.3);
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.2);
   letter-spacing: 0.15em;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  opacity: 0;
 }
 
 #center-area:hover::after {
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 /* Base Card Styling for All Left Rail Panels */
@@ -489,36 +490,89 @@
   #dashboard {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto;
-    height: calc(100vh - 88px);
+    height: auto;
+    min-height: calc(100vh - 88px);
     overflow-y: auto;
+    padding: var(--space-md);
   }
 
   #left-rail,
   #right-rail {
     grid-column: 1 / -1;
-    max-height: 50vh;
+    max-height: none;
+    height: auto;
   }
 
   #center-area {
     grid-column: 1 / -1;
-    min-height: 400px;
+    min-height: 60vh;
+    height: 60vh;
+  }
+
+  #center-area::after {
+    font-size: 8px;
+    opacity: 0.3;
   }
 
   #action-buttons {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 768px) {
+  /* Make panels more compact on tablets */
+  #cts-panel {
+    min-height: 240px;
+  }
+
   #cts-score {
     font-size: 64px;
   }
+}
+
+@media (max-width: 768px) {
+  #dashboard {
+    padding: var(--space-sm);
+    gap: var(--space-md);
+  }
+
+  #cts-score {
+    font-size: 56px;
+  }
 
   .unit {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  #cts-panel {
+    min-height: 200px;
+    padding: var(--space-md);
+  }
+
+  #cts-panel h3 {
+    font-size: 11px;
+  }
+
+  #asset-info p {
+    font-size: 11px;
+  }
+
+  #log-entries {
+    font-size: 10px;
+  }
+
+  .action-btn {
+    padding: var(--space-md);
   }
 
   .action-btn .icon {
     font-size: 24px;
+  }
+
+  .action-btn .cost {
+    font-size: 9px;
+  }
+
+  #center-area {
+    min-height: 50vh;
+    height: 50vh;
   }
 }

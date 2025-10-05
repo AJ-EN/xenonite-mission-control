@@ -429,6 +429,46 @@
   font-weight: 500;
 }
 
+/* Skip Intro Button */
+.skip-intro-btn {
+  margin-top: var(--space-xl);
+  padding: var(--space-md) var(--space-xl);
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 24px;
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  backdrop-filter: blur(10px);
+}
+
+.skip-intro-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: var(--color-primary);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+}
+
+.skip-intro-btn:active {
+  transform: translateX(2px);
+}
+
+.skip-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.skip-intro-btn:hover .skip-icon {
+  transform: translateX(4px);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .historical-title h1 {
@@ -484,5 +524,10 @@
 
   .timeline-controls {
     max-width: calc(100vw - 2rem);
+  }
+
+  .skip-intro-btn {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 10px;
   }
 }

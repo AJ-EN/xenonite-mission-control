@@ -46,8 +46,31 @@
   text-transform: uppercase;
 }
 
+#mission-header .header-actions {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
 #mission-header .header-actions .btn {
   padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: all 0.3s ease;
+}
+
+#toggle-follow-btn {
+  border-color: #00ff88;
+}
+
+#toggle-follow-btn .follow-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+#toggle-follow-btn:hover .follow-icon {
+  transform: scale(1.2);
 }
 
 /* Responsive */

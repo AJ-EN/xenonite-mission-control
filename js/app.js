@@ -233,6 +233,10 @@ const App = (function () {
             if (params) {
                 UIController.updateAssetInfo(tle.name, params);
                 console.log('App: Asset info updated');
+
+                // Draw orbital trajectory line
+                SceneManager.drawOrbitTrajectory(params);
+                console.log('App: Orbital trajectory drawn');
             }
 
             // *** SHOW BUSINESS MODEL PANEL ***

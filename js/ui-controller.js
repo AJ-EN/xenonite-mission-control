@@ -66,6 +66,7 @@ const UIController = (function () {
         elements.satLife = document.getElementById('sat-life');
         elements.satStatus = document.getElementById('sat-status');
         elements.changeAssetBtn = document.getElementById('change-asset-btn');
+        elements.toggleFollowBtn = document.getElementById('toggle-follow-btn');
 
         // TLE Input Section
         elements.tleInputSection = document.getElementById('tle-input-section');
@@ -131,6 +132,11 @@ const UIController = (function () {
         // Header: Change Asset (return to setup)
         if (elements.changeAssetBtn) {
             elements.changeAssetBtn.addEventListener('click', returnToSetup);
+        }
+
+        // Header: Toggle camera follow
+        if (elements.toggleFollowBtn) {
+            elements.toggleFollowBtn.addEventListener('click', toggleCameraFollow);
         }
 
         // Keyboard shortcuts
@@ -333,9 +339,12 @@ const UIController = (function () {
     function showDashboard() {
         elements.dashboard.classList.remove('hidden');
         elements.businessPanel.classList.remove('hidden');
-        // Show header action when dashboard is visible
+        // Show header actions when dashboard is visible
         if (elements.changeAssetBtn) {
             elements.changeAssetBtn.classList.remove('hidden');
+        }
+        if (elements.toggleFollowBtn) {
+            elements.toggleFollowBtn.classList.remove('hidden');
         }
 
         addLogEntry('Mission control dashboard activated');
@@ -646,6 +655,14 @@ const UIController = (function () {
                 showKeyboardHelp();
             }
         }
+
+        // F: Toggle camera follow
+        if (event.key === 'f' || event.key === 'F') {
+            if (!event.ctrlKey && !event.metaKey && !event.target.matches('textarea, input')) {
+                event.preventDefault();
+                toggleCameraFollow();
+            }
+        }
     }
 
     // ==========================================
@@ -698,6 +715,38 @@ const UIController = (function () {
     // 19. SHOW KEYBOARD HELP FUNCTION
     // ==========================================
     /**
+     * Toggle camera follow mode
+     */
+    function toggleCameraFollow() {
+        if (window.SceneManager && SceneManager.toggleAutoFollow) {
+            const isFollowing = SceneManager.toggleAutoFollow();
+
+            // Update button text
+            if (elements.toggleFollowBtn) {
+                const followText = elements.toggleFollowBtn.querySelector('.follow-text');
+                if (followText) {
+                    followText.textContent = isFollowing ? 'Follow: ON' : 'Follow: OFF';
+                }
+
+                // Visual feedback
+                elements.toggleFollowBtn.style.borderColor = isFollowing ? '#00ff88' : '#ff8800';
+            }
+
+            // Show toast
+            showToast(
+                isFollowing ? 'Camera following satellite' : 'Camera follow disabled',
+                isFollowing ? 'success' : 'info',
+                2000
+            );
+
+            addLogEntry(
+                isFollowing ? 'Camera auto-follow ENABLED' : 'Camera auto-follow DISABLED',
+                'info'
+            );
+        }
+    }
+
+    /**
      * Shows keyboard shortcut help
      */
     function showKeyboardHelp() {
@@ -709,6 +758,7 @@ const UIController = (function () {
       ║ Ctrl+Shift+R  Reset to nominal       ║
       ║ Space         Pause/Resume           ║
       ║ Escape        Close action panel     ║
+      ║ F             Toggle camera follow   ║
       ║ T             Time acceleration 10x  ║
       ║ N             Normal time 1x         ║
       ║ H             Show this help         ║

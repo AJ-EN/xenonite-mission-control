@@ -27,12 +27,17 @@ const SceneManager = (function () {
     // Relationship lines
     let relationshipGroup = null;
 
+    // Orbital trajectory
+    let orbitLineMesh = null;
+    let orbitPointsMesh = null;
+
     // Camera control state
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
     let cameraDistance = 20;
     let cameraTheta = Math.PI / 4;
     let cameraPhi = Math.PI / 3;
+    let autoFollowSatellite = false;  // Auto-follow player satellite
 
     // Constants
     const EARTH_RADIUS = 6.371; // Earth radius in scene units (1 unit = 1000km)
@@ -152,19 +157,47 @@ const SceneManager = (function () {
                 earthMesh = new THREE.Mesh(geometry, material);
                 scene.add(earthMesh);
 
-                // Subtle atmosphere glow
-                const atmoGeom = new THREE.SphereGeometry(EARTH_RADIUS * 1.03, 64, 64);
-                const atmoMat = new THREE.MeshBasicMaterial({
+                // Enhanced multi-layer atmosphere
+                // Layer 1: Inner atmosphere (thin, bright)
+                const atmoGeom1 = new THREE.SphereGeometry(EARTH_RADIUS * 1.015, 64, 64);
+                const atmoMat1 = new THREE.MeshBasicMaterial({
+                    color: 0x4db8ff,
+                    transparent: true,
+                    opacity: 0.15,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                    side: THREE.BackSide
+                });
+                const atmoLayer1 = new THREE.Mesh(atmoGeom1, atmoMat1);
+                scene.add(atmoLayer1);
+
+                // Layer 2: Middle atmosphere (medium glow)
+                const atmoGeom2 = new THREE.SphereGeometry(EARTH_RADIUS * 1.025, 64, 64);
+                const atmoMat2 = new THREE.MeshBasicMaterial({
                     color: 0x2e96ff,
                     transparent: true,
-                    opacity: 0.06,
+                    opacity: 0.1,
                     blending: THREE.AdditiveBlending,
-                    depthWrite: false
+                    depthWrite: false,
+                    side: THREE.BackSide
                 });
-                atmosphereMesh = new THREE.Mesh(atmoGeom, atmoMat);
+                atmosphereMesh = new THREE.Mesh(atmoGeom2, atmoMat2);
                 scene.add(atmosphereMesh);
 
-                console.log('SceneManager: Earth + atmosphere loaded successfully');
+                // Layer 3: Outer atmosphere (soft, diffuse)
+                const atmoGeom3 = new THREE.SphereGeometry(EARTH_RADIUS * 1.04, 64, 64);
+                const atmoMat3 = new THREE.MeshBasicMaterial({
+                    color: 0x1a5caa,
+                    transparent: true,
+                    opacity: 0.05,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                    side: THREE.BackSide
+                });
+                const atmoLayer3 = new THREE.Mesh(atmoGeom3, atmoMat3);
+                scene.add(atmoLayer3);
+
+                console.log('SceneManager: Earth + enhanced multi-layer atmosphere loaded');
             },
             undefined,
             function (error) {
@@ -304,33 +337,60 @@ const SceneManager = (function () {
     }
 
     // ==========================================
-    // 6. UPDATE PLAYER SATELLITE FUNCTION
+    // 6. UPDATE PLAYER SATELLITE FUNCTION (ENHANCED)
     // ==========================================
     function updatePlayerSatellite(position) {
         if (!playerSatelliteMesh) {
-            // Satellite sprite
-            const sprite = createIconSprite(textures.satellite, 0.55);
+            // Create main satellite sprite - MUCH LARGER
+            const sprite = createIconSprite(textures.satellite, 1.2); // Was 0.55, now 1.2
             sprite.position.copy(position);
             scene.add(sprite);
 
-            // Subtle glow ring (billboard too)
-            const glowGeometry = new THREE.CircleGeometry(0.42, 32);
-            const glowMaterial = new THREE.MeshBasicMaterial({
+            // Add multiple glow layers for better visibility
+            // Layer 1: Inner bright glow
+            const innerGlowGeom = new THREE.CircleGeometry(0.8, 32);
+            const innerGlowMat = new THREE.MeshBasicMaterial({
                 color: 0x00ffff,
                 transparent: true,
-                opacity: 0.18,
+                opacity: 0.4,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
             });
-            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-            glow.rotation.x = -Math.PI / 2;
-            sprite.add(glow);
+            const innerGlow = new THREE.Mesh(innerGlowGeom, innerGlowMat);
+            innerGlow.rotation.x = -Math.PI / 2;
+            sprite.add(innerGlow);
+
+            // Layer 2: Outer pulsing glow
+            const outerGlowGeom = new THREE.CircleGeometry(1.5, 32);
+            const outerGlowMat = new THREE.MeshBasicMaterial({
+                color: 0x00d4ff,
+                transparent: true,
+                opacity: 0.25,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const outerGlow = new THREE.Mesh(outerGlowGeom, outerGlowMat);
+            outerGlow.rotation.x = -Math.PI / 2;
+            sprite.add(outerGlow);
+
+            // Store references for animation
+            sprite.userData.innerGlow = innerGlow;
+            sprite.userData.outerGlow = outerGlow;
+            sprite.userData.pulsePhase = 0;
 
             playerSatelliteMesh = sprite;
 
-            console.log('SceneManager: Player satellite sprite created');
+            // Enable auto-follow when satellite is created
+            autoFollowSatellite = true;
+
+            console.log('SceneManager: Enhanced player satellite created (LARGE & GLOWING)');
         } else {
             playerSatelliteMesh.position.copy(position);
+        }
+
+        // Auto-follow camera to satellite if enabled
+        if (autoFollowSatellite && playerSatelliteMesh) {
+            smoothFollowSatellite(position);
         }
     }
 
@@ -361,7 +421,7 @@ const SceneManager = (function () {
     }
 
     // ==========================================
-    // 8. UPDATE DEBRIS FUNCTION (Sprites)
+    // 8. UPDATE DEBRIS FUNCTION (ENHANCED with varied sizes & glow)
     // ==========================================
     function updateDebris(positions) {
         debrisMeshes.forEach(mesh => {
@@ -375,13 +435,33 @@ const SceneManager = (function () {
         const limit = Math.min(positions.length, 220);
 
         for (let i = 0; i < limit; i++) {
-            const sprite = createIconSprite(textures.debris, 0.22);
+            // Varied debris sizes for realism (0.25 to 0.45)
+            const size = 0.25 + Math.random() * 0.2;
+            const sprite = createIconSprite(textures.debris, size);
             sprite.position.copy(positions[i]);
+
+            // Add subtle glow to make debris more visible
+            const glowGeom = new THREE.CircleGeometry(size * 1.5, 16);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0xff4400,
+                transparent: true,
+                opacity: 0.15,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const glow = new THREE.Mesh(glowGeom, glowMat);
+            glow.rotation.x = -Math.PI / 2;
+            sprite.add(glow);
+
+            // Store for animation
+            sprite.userData.glowPhase = Math.random() * Math.PI * 2;
+            sprite.userData.glow = glow;
+
             scene.add(sprite);
             debrisMeshes.push(sprite);
         }
 
-        console.log(`SceneManager: Updated ${limit} debris objects (sprites)`);
+        console.log(`SceneManager: Updated ${limit} enhanced debris objects`);
     }
 
     // ==========================================
@@ -462,11 +542,32 @@ const SceneManager = (function () {
     }
 
     // ==========================================
-    // 12. RENDER FUNCTION AND ANIMATE EARTH
+    // 12. RENDER FUNCTION AND ANIMATE EARTH + EFFECTS
     // ==========================================
     function animate() {
+        // Rotate Earth
         if (earthMesh) earthMesh.rotation.y += 0.0008;
         if (atmosphereMesh) atmosphereMesh.rotation.y += 0.0008;
+
+        // Animate player satellite glow (pulsing effect)
+        if (playerSatelliteMesh && playerSatelliteMesh.userData.outerGlow) {
+            playerSatelliteMesh.userData.pulsePhase += 0.03;
+            const pulse = Math.sin(playerSatelliteMesh.userData.pulsePhase) * 0.15 + 0.25;
+            playerSatelliteMesh.userData.outerGlow.material.opacity = pulse;
+
+            // Scale pulse
+            const scale = 1.0 + Math.sin(playerSatelliteMesh.userData.pulsePhase) * 0.1;
+            playerSatelliteMesh.userData.outerGlow.scale.set(scale, scale, 1);
+        }
+
+        // Animate debris glow (subtle pulsing)
+        debrisMeshes.forEach(debris => {
+            if (debris.userData.glow) {
+                debris.userData.glowPhase += 0.02;
+                const glowPulse = Math.sin(debris.userData.glowPhase) * 0.08 + 0.15;
+                debris.userData.glow.material.opacity = glowPulse;
+            }
+        });
     }
     function render() {
         if (!renderer || !scene || !camera) return;
@@ -475,7 +576,124 @@ const SceneManager = (function () {
     }
 
     // ==========================================
-    // 13. UTILITY: CONVERT LAT/LON/ALT TO VECTOR3
+    // 13. SMOOTH CAMERA FOLLOW (NEW - FIXED)
+    // ==========================================
+    function smoothFollowSatellite(satellitePosition) {
+        if (!satellitePosition || isDragging) return;
+
+        // Smooth interpolation (lerp) for camera movement
+        const lerpFactor = 0.03; // Smooth factor (lower = smoother)
+
+        // Calculate target angles to look at satellite (don't change distance!)
+        const targetTheta = Math.atan2(satellitePosition.x, satellitePosition.z);
+        const targetPhi = Math.acos(satellitePosition.y / satellitePosition.length());
+
+        // Smooth transition for ANGLES ONLY (preserve user's zoom level)
+        cameraTheta += (targetTheta - cameraTheta) * lerpFactor;
+        cameraPhi += (targetPhi - cameraPhi) * lerpFactor;
+
+        // Keep phi in valid range
+        cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi));
+
+        updateCameraPosition();
+    }
+
+    // ==========================================
+    // 14. DRAW ORBITAL TRAJECTORY (NEW)
+    // ==========================================
+    function drawOrbitTrajectory(orbitalParams) {
+        // Remove existing orbit line
+        if (orbitLineMesh) {
+            scene.remove(orbitLineMesh);
+            if (orbitLineMesh.geometry) orbitLineMesh.geometry.dispose();
+            if (orbitLineMesh.material) orbitLineMesh.material.dispose();
+        }
+        if (orbitPointsMesh) {
+            scene.remove(orbitPointsMesh);
+            if (orbitPointsMesh.geometry) orbitPointsMesh.geometry.dispose();
+            if (orbitPointsMesh.material) orbitPointsMesh.material.dispose();
+        }
+
+        if (!orbitalParams) return;
+
+        try {
+            const { altitude, inclination } = orbitalParams;
+            const orbitRadius = EARTH_RADIUS + parseFloat(altitude) * SCENE_SCALE;
+            const inclinationRad = parseFloat(inclination) * (Math.PI / 180);
+
+            // Generate orbit points (simplified circular orbit)
+            const segments = 128;
+            const orbitPoints = [];
+
+            for (let i = 0; i <= segments; i++) {
+                const theta = (i / segments) * Math.PI * 2;
+
+                // Calculate position on inclined orbit
+                const x = orbitRadius * Math.cos(theta);
+                const y = orbitRadius * Math.sin(theta) * Math.sin(inclinationRad);
+                const z = orbitRadius * Math.sin(theta) * Math.cos(inclinationRad);
+
+                orbitPoints.push(new THREE.Vector3(x, y, z));
+            }
+
+            // Create the orbit line
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+            const orbitMaterial = new THREE.LineBasicMaterial({
+                color: 0x00ffff,
+                transparent: true,
+                opacity: 0.4,
+                linewidth: 2
+            });
+            orbitLineMesh = new THREE.Line(orbitGeometry, orbitMaterial);
+            scene.add(orbitLineMesh);
+
+            // Add distance markers along the orbit (every 90 degrees)
+            const markerPositions = [0, 32, 64, 96]; // 0°, 90°, 180°, 270°
+            const markerGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+            const markerMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00d4ff,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            const markerGroup = new THREE.Group();
+            markerPositions.forEach(index => {
+                const marker = new THREE.Mesh(markerGeometry, markerMaterial.clone());
+                marker.position.copy(orbitPoints[index]);
+                markerGroup.add(marker);
+
+                // Add glow to markers
+                const glowGeom = new THREE.SphereGeometry(0.25, 16, 16);
+                const glowMat = new THREE.MeshBasicMaterial({
+                    color: 0x00d4ff,
+                    transparent: true,
+                    opacity: 0.3,
+                    blending: THREE.AdditiveBlending
+                });
+                const glow = new THREE.Mesh(glowGeom, glowMat);
+                marker.add(glow);
+            });
+
+            orbitPointsMesh = markerGroup;
+            scene.add(orbitPointsMesh);
+
+            console.log('SceneManager: Orbital trajectory drawn successfully');
+        } catch (error) {
+            console.warn('SceneManager: Error drawing orbit trajectory', error);
+        }
+    }
+
+    // ==========================================
+    // 15. TOGGLE AUTO-FOLLOW (NEW)
+    // ==========================================
+    function toggleAutoFollow() {
+        autoFollowSatellite = !autoFollowSatellite;
+        console.log(`SceneManager: Auto-follow ${autoFollowSatellite ? 'ENABLED' : 'DISABLED'}`);
+        return autoFollowSatellite;
+    }
+
+    // ==========================================
+    // 16. UTILITY: CONVERT LAT/LON/ALT TO VECTOR3
     // ==========================================
     function geodeticToVector3(lat, lon, alt) {
         const phi = (90 - lat) * (Math.PI / 180);
@@ -505,6 +723,10 @@ const SceneManager = (function () {
         geodeticToVector3: geodeticToVector3,
 
         updateRelationships: updateRelationships,
+
+        // NEW: Orbital trajectory and camera control
+        drawOrbitTrajectory: drawOrbitTrajectory,
+        toggleAutoFollow: toggleAutoFollow,
 
         // Getters for other modules
         getScene: function () { return scene; },
